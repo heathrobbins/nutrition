@@ -158,6 +158,13 @@ def view_calendar_entries(calendar_entries):
     print("Calendar Entries:")
     for date, meal_log in calendar_entries.items():
         print(f"Date: {date}")
+        daily_totals = {  # Initialize daily totals
+            'calories': 0,
+            'carbohydrates': 0,
+            'proteins': 0,
+            'fats': 0
+        }
+
         for meal_type, entries in meal_log.items():
             if entries:
                 print(f"{meal_type}:")
@@ -168,13 +175,28 @@ def view_calendar_entries(calendar_entries):
                     print(f"Proteins: {entry['proteins']}g per serving")
                     print(f"Fats: {entry['fats']}g per serving")
                     print()
+
+                    # Calculate totals for the current entry
+                    totals = calculate_meal_log_totals({meal_type: [entry]})
+
+                    # Add the current entry's totals to the daily totals
+                    daily_totals['calories'] += totals['calories']
+                    daily_totals['carbohydrates'] += totals['carbohydrates']
+                    daily_totals['proteins'] += totals['proteins']
+                    daily_totals['fats'] += totals['fats']
+
+                # Display totals for the current meal type
+                print(f"Total {meal_type}:")
+                print(f"Calories: {totals['calories']} | Carbohydrates: {totals['carbohydrates']}g | Proteins: {totals['proteins']}g | Fats: {totals['fats']}g")
+                print()
             else:
                 print(f"{meal_type}: No entries")
         print()
 
-    totals = calculate_meal_log_totals(meal_log)
-    print(f"Total: Calories: {totals['calories']} | Carbohydrates: {totals['carbohydrates']}g | Proteins: {totals['proteins']}g | Fats: {totals['fats']}g")
-
+        # Display totals for the day
+        print("Totals for the day:")
+        print(f"Calories: {daily_totals['calories']} | Carbohydrates: {daily_totals['carbohydrates']}g | Proteins: {daily_totals['proteins']}g | Fats: {daily_totals['fats']}g")
+        print()
 
 def main():
     food_database = load_food_database()
@@ -253,4 +275,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
